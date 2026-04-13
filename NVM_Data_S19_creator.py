@@ -16,6 +16,27 @@ import time
 
 # args = parser.parse_args()
 
+
+# Optional: canonical factory defaults
+DEFAULT_FACTORY_DATA = {0x01:0x000000000000,  # Key 1
+                        0x02:0x0001010407EA,	# date of manufacture (00 SH DD MM YYYY)
+                        0x03:0x01540001130C, 	# Base PN (01 T 070412)
+                        0x04:0x000000000300, 	# issue and mod (000 03 00)
+                        0x05:0x000000000000, 	# Key 5
+                        0x06:0x000000000000, 	# key 6
+                        0x07:0x000000000000, 	# key 7
+                        0x08:0x004BADF59545, 	# serial number              
+                        0x09:0x000000000000, 	# key 9
+                        0x0A:0x202020555349, 	# mfg name (   USI)
+                        0x0B:0x000000000000, 	# developer features
+                        0x10:0x0C73EBAA0061, 	# PLC MAC address
+                        0x12:0x0C73EBAB0061, 	# Ethernet MAC Address
+                        0x11:0x002000000000, 	# PIB PN (0 000000)
+                        0x80:0x025400011309,  # base Pn at MFG ( 02 T 070409)
+                        0x81:0x000000000001, 	# Config Issue PN at MFG (00 00 00 00 00 01)
+                        0x82:0x4E78332D3030, 	# HW product name (Nx3-00)	
+                        0x83:0x302020202020} # HW product name part 2 (0     )	
+
 def write_32(a, addr, v):
     if a is None: a = [0, 0, 0, 0]
     write_16(a, addr + 0, v >>  0)
@@ -96,11 +117,14 @@ def change_s19(dict_key_factory_data, s19):
     modified_key_plus_data = ''
 
     for key, values in dict_key_factory_data.items():
+        print("key={0} : Values={1}".format(key,values))
         key_plus_data = "{:04X}".format(key) + "{:012X}".format(values)
+        #key_plus_data = "{:04X}".format(key) + values
         print("keyplusdata: " + key_plus_data)
         modified_key_plus_data += key_plus_data
         counter += 1
     print("counter = {0}".format(counter))
+    print("NextLine = {:08X}".format(counter) + _always_zeros + modified_key_plus_data)
     checksum = Calc_Crc("{:08X}".format(counter) + _always_zeros + modified_key_plus_data)
     print("Checksum = {:04X}".format(checksum))
     all_data = bytes.fromhex(start_of_s19 + format(checksum, '04X') + format(counter, '08X') + _always_zeros + modified_key_plus_data)
@@ -151,7 +175,7 @@ if __name__ == "__main__":
                                       0x05:0x000000000000, 	# Key 5
                                       0x06:0x000000000000, 	# key 6
                                       0x07:0x000000000000, 	# key 7
-                                      0x08:0x004BADF59545, 	# serial number              
+                                      0x08:0x004BADF59545, 	# serial number (325041100101)           
                                       0x09:0x000000000000, 	# key 9
                                       0x0A:0x202020555349, 	# mfg name (   USI)
                                       0x0B:0x000000000000, 	# developer features

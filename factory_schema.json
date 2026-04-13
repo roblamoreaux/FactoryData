@@ -1,0 +1,19 @@
+{
+  "meta": { "date_format": "SSDDMMYYYY", "date_encoding": "BINARY" },
+  "shift_number": { "type": "int", "min": 0, "max": 99, "required": true },
+  "fields": {
+    "dateMGF": { "hex_key": "0x02", "type": "date_ssddmmyyyy_binary", "required": true },
+    "Base_PN": { "hex_key": "0x03", "type": "partnum", "max_length": 16 },
+    "issue_mod": { "hex_key": "0x04", "type": "issmod" },
+    "serialNumber": { "hex_key": "0x08", "type": "uint48", "required": true },
+    "mfg_Location": { "hex_key": "0x0A", "type": "ascii", "max_length": 8 },
+    "developer_features": { "hex_key": "0x0B", "type": "uint16" },
+    "PLC_MAC_address": { "hex_key": "0x10", "type": "mac" },
+    "PIB_PN": { "hex_key": "0x11", "type": "partnum", "max_length": 16 },
+    "Enet_MAC_Address": { "hex_key": "0x12", "type": "mac" },
+    "base_PN_at_MFG": { "hex_key": "0x80", "type": "partnum", "max_length": 16 },
+    "Config_Issue_at_MFG": { "hex_key": "0x81", "type": "uint8" },
+    "HW_product_name_Part1": { "hex_key": "0x82", "type": "ascii", "max_length": 16 },
+    "HW_product_name_Part2": { "hex_key": "0x83", "type": "ascii", "max_length": 16 }
+  }
+}
