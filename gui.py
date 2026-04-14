@@ -16,7 +16,7 @@ def decode_uint16(indat):
 
 def decode_uint8(indat):
     hexstr =  "{0:012X}".format(indat)
-    print("uint16={0}".format(hexstr))#hexstr):
+    print("uint8={0}".format(hexstr))#hexstr):
     return str(int(hexstr, 16))
 
 def decode_partnumber(indat):
@@ -60,9 +60,10 @@ def decode_issmod(indat):
     return rstr
 
 class App:
-    def __init__(self, root, schema):
+    def __init__(self, root, schema, factory_dict):
         self.root = root
         self.schema = schema
+        self.factory_dict = factory_dict
         self.entries = {}
         r = 0
         tk.Label(root, text='Shift').grid(row=r,column=0)
@@ -80,8 +81,8 @@ class App:
             e = tk.Entry(root, width=30)
 
             key = int(field["hex_key"], 16)
-            hexval = defaults.get(key)
-
+            #hexval = defaults.get(key)
+            hexval = factory_dict.get(key)
             # Decode based on type
             if hexval:
                 t = field["type"]
@@ -116,5 +117,5 @@ class App:
         tk.Button(root,text='Submit',command=self.submit).grid(row=r,column=0,columnspan=2)
     def submit(self): self.root.quit()
 
-def run_gui(schema):
-    root=tk.Tk(); app=App(root,schema); root.mainloop(); return app
+def run_gui(schema, factory_dict):
+    root=tk.Tk(); app=App(root,schema, factory_dict); root.mainloop(); return app

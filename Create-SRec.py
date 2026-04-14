@@ -58,7 +58,7 @@ def build_factory_data(schema, args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("NVM S19 Factory Tool")
     parser.add_argument("--gui", action="store_true")
-    parser.add_argument("--shift", type=int, required=True)
+    parser.add_argument("--shift", type=int)
 
     # auto-generated CLI args
     with open("factory_schema.json") as f:
@@ -68,12 +68,15 @@ if __name__ == "__main__":
         parser.add_argument(f"--{k}")
 
     args = parser.parse_args()
+
+    # 2️⃣ Build factory data (defaults + user overrides)
+    factory_dict = build_factory_data(schema, args)
     if args.gui:
         print("Starting gui")
-        app = run_gui(schema)
+        app = run_gui(schema, factory_dict)
 
         # Pull values from GUI into args
-        args.shift = int(app.shift.get())
+        #args.shift = int(app.shift.get())
 
         for name in schema["fields"]:
             setattr(args, name, app.entries[name].get())
@@ -83,7 +86,7 @@ if __name__ == "__main__":
     s19_file = nvm.new_s19_creator()
 
     # 2️⃣ Build factory data (defaults + user overrides)
-    factory_dict = build_factory_data(schema, args)
+    #factory_dict = build_factory_data(schema, args)
 
     # 3️⃣ Apply factory data using enclosed function
     new_data_line_count = nvm.change_s19(factory_dict, s19_file)
