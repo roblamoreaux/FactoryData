@@ -86,12 +86,12 @@ def Calc_Crc(hex_string):
     crc = crc32_func(bytes.fromhex(hex_string))
     return crc
 
-def new_s19_creator():
+def new_s19_creator(basename = ''):
     """ Creates an new s19 with time stamp."""
 
     timestr = time.strftime("%Y-%m_%d_%H_%M_%S")
 
-    new_s19 = timestr + '_' + "platform-registry.s19"
+    new_s19 = basename + timestr + '_' + "platform-registry.s19"
 
     # Create a new file
     file = Path(new_s19)

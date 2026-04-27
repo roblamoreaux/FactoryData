@@ -83,7 +83,7 @@ if __name__ == "__main__":
 #
 
     # 1️⃣ Create new S19 via enclosed module
-    s19_file = nvm.new_s19_creator()
+    s19_file = nvm.new_s19_creator(app.entries["serialNumber"].get() + "-")
 
     # 2️⃣ Build factory data (defaults + user overrides)
     #factory_dict = build_factory_data(schema, args)
