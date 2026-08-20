@@ -1,0 +1,20 @@
+{
+  "addresses_file": "C:\SVN\Products\ECUs\Nx3_Family\Build\Addresses.txt",
+  "output_directory": "C:\SVN\Products\ECUs\Nx3_Family\Build\Factory-SRECs",
+  "initial_values": {
+    "shift": "1",
+    "dateMGF": "2026-04-01",
+    "Base_PN": "01T070412",
+    "issue_mod": "03:00",
+    "serialNumber": "",
+    "mfg_Location": "   USI",
+    "developer_features": "0",
+    "PLC_MAC_address": "",
+    "PIB_PN": "00 000000",
+    "Enet_MAC_Address": "",
+    "base_PN_at_MFG": "02T070409",
+    "Config_Issue_at_MFG": "1",
+    "HW_product_name_Part1": "Nx3-00",
+    "HW_product_name_Part2": "0     "
+  }
+}

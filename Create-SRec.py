@@ -3,6 +3,7 @@ import json
 import NVM_Data_S19_creator as nvm
 from encoder import *
 from gui import run_gui
+from config import load_config
 
 
 def load_defaults():
@@ -56,40 +57,28 @@ def build_factory_data(schema, args):
     return factory_data
 
 if __name__ == "__main__":
+    config = load_config()
+    initial_values = config.get("initial_values", {})
+
     parser = argparse.ArgumentParser("NVM S19 Factory Tool")
-    parser.add_argument("--gui", action="store_true")
-    parser.add_argument("--shift", type=int)
+    parser.add_argument("--shift", type=int, default=initial_values.get("shift"))
 
     # auto-generated CLI args
     with open("factory_schema.json") as f:
         schema = json.load(f)
 
     for k in schema["fields"]:
-        parser.add_argument(f"--{k}")
+        parser.add_argument(f"--{k}", default=initial_values.get(k))
 
     args = parser.parse_args()
 
-    # 2️⃣ Build factory data (defaults + user overrides)
-    factory_dict = build_factory_data(schema, args)
-    if True: #args.gui:
-        print("Starting gui")
-        app = run_gui(schema, factory_dict)
-
-        # Pull values from GUI into args
-        args.shift = int(app.shift.get())
-
-        for name in schema["fields"]:
-            setattr(args, name, app.entries[name].get())
-#
-
-    # 1️⃣ Create new S19 via enclosed module
-    s19_file = nvm.new_s19_creator(app.entries["serialNumber"].get() + "-")
-
-    # 2️⃣ Build factory data (defaults + user overrides)
+    # Build initial factory data (config initial values + any CLI overrides) to pre-fill the GUI
     factory_dict = build_factory_data(schema, args)
 
-    # 3️⃣ Apply factory data using enclosed function
-    new_data_line_count = nvm.change_s19(factory_dict, s19_file)
-    nvm.add_buffer_lines(new_data_line_count, 'platform-registry.s19', s19_file)
+    # Always enter the GUI. Each "Submit" click inside the GUI builds and
+    # writes an S19 file without closing the window; the program only exits
+    # once the user presses the "Exit" button in the GUI.
+    print("Starting gui")
+    run_gui(schema, factory_dict, build_factory_data, config)
 
-    print(f"S19 created and updated: {s19_file}")
+    print("GUI closed. Exiting program.")
