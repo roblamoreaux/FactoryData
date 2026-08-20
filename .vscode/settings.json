@@ -1,5 +1,6 @@
 {
     "python.autoComplete.extraPaths": [
         "c:\\Users\\robert.lamoreaux\\.vscode\\extensions\\keysight.opentap-python-0.1.0\\out\\pythonStubs"
-    ]
+    ],
+    "python-envs.defaultEnvManager": "ms-python.python:system"
 }
