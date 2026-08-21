@@ -1,6 +1,6 @@
 {
-  "addresses_file": "C:\SVN\Products\ECUs\Nx3_Family\Build\Addresses.txt",
-  "output_directory": "C:\SVN\Products\ECUs\Nx3_Family\Build\Factory-SRECs",
+  "addresses_file": ".\\Addresses.txt",
+  "output_directory": ".\\Factory-SRECs",
   "initial_values": {
     "shift": "1",
     "dateMGF": "2026-04-01",

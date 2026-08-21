@@ -3,6 +3,7 @@ from tkinter import messagebox, filedialog
 import json
 import os
 import csv
+import datetime
 from encoder import *
 import NVM_Data_S19_creator as nvm
 
@@ -153,6 +154,40 @@ class App:
             raise ValueError(f"{self.addresses_path} is empty.")
         self.address_header = rows[0]
         self.address_rows = rows[1:]
+        self.ensure_extended_header()
+
+    def extra_field_columns(self):
+        """
+        Names of the extra columns we track in Addresses.txt for every
+        schema field except serialNumber/PLC_MAC_address/Enet_MAC_Address,
+        which already have their own dedicated columns (Serial Number,
+        PLC, Ethernet). "Shift" is included too since it's a distinct
+        value entered in the form even though it isn't a schema field.
+        "Timestamp" records when the S19 file for that row was created.
+        """
+        return ["Shift"] + [
+            name for name in self.schema["fields"]
+            if name not in ("serialNumber", "PLC_MAC_address", "Enet_MAC_Address")
+        ] + ["Timestamp"]
+
+    def ensure_extended_header(self):
+        """
+        Make sure self.address_header has a column for every extra factory
+        field, adding any that are missing (this upgrades older
+        Addresses.txt files in place) and padding existing rows so they
+        stay aligned with the new, longer header.
+        """
+        added_any = False
+        for col in self.extra_field_columns():
+            if col not in self.address_header:
+                self.address_header.append(col)
+                added_any = True
+
+        if added_any:
+            target_len = len(self.address_header)
+            for row in self.address_rows:
+                while len(row) < target_len:
+                    row.append("")
 
     def write_addresses(self):
         """Write self.address_header / self.address_rows back to Addresses.txt."""
@@ -308,8 +343,26 @@ class App:
             messagebox.showerror("Error creating S19", str(e))
             return
 
-        # 4) Only now write the serial number into Addresses.txt and save.
-        self.address_rows[row_idx][1] = serial
+        # 4) Only now write the serial number and all other field values
+        #    into Addresses.txt and save.
+        row = self.address_rows[row_idx]
+        while len(row) < len(self.address_header):
+            row.append("")
+
+        row[1] = serial
+
+        shift_col = self.address_header.index("Shift")
+        row[shift_col] = str(shift_value)
+
+        for name in self.schema["fields"]:
+            if name in ("serialNumber", "PLC_MAC_address", "Enet_MAC_Address"):
+                continue
+            col_idx = self.address_header.index(name)
+            row[col_idx] = self.entries[name].get()
+
+        timestamp_col = self.address_header.index("Timestamp")
+        row[timestamp_col] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
         try:
             self.write_addresses()
         except Exception as e:
